@@ -1,0 +1,38 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        service-name: ${spring.application.name}
+
+    gateway:
+      routes:
+      - id: pay_route1
+        uri: lb://cloud-provider-payment
+        predicates:
+          - Path=/pay/gateway/get/**
+          - name: My
+            args:
+              userType: admin
+      - id: pay_route3
+        uri: lb://cloud-provider-payment
+        predicates:
+          - Path=/pay/gateway/filter/**
+        filters:
+          - AddRequestHeader=X-Request-atguigu1,atguiguValue1
+          - AddRequestHeader=X-Request-atguigu2,atguiguValue2
+          - AddResponseHeader=X-Response-atguigu,BlueResponseValue
+          - My=atguigu
+
+
+#        - id: pay_route2
+#          uri: lb://cloud-provider-payment
+#          predicates:
+#            - Path=/pay/gateway/**

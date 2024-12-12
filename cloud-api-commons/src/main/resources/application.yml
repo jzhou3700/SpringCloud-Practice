@@ -1,0 +1,115 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: cloud-consumer-order
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+#        service-name: ${spring.application.name}
+#        instance-id: ${spring.application.name}-${random.int}
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+        enabled: true
+#      openfeign:
+#        httpclient:
+#          hc5:
+#            enabled: true
+#        compression:
+#          request:
+#            enabled: true
+#            mime-types: text/xml,application/xml,application/json
+#            min-request-size: 2048
+        client:
+          config:
+            default:
+              connect-timeout: 3000
+              read-timeout: 3000
+        circuitbreaker:
+          enabled: true
+          group:
+            enabled: true
+logging:
+  level:
+    com:
+      jay:
+        cloud:
+          apis:
+            com.atguigu.cloud.apis.PayFeignApi: debug
+
+#resilience4j:
+#  circuitbreaker:
+#    configs:
+#      default:
+#        minimumNumberOfCalls: 5 # 最小调用次数
+#        failureRateThreshold: 50 # 失败率达到多少后
+#        waitDurationInOpenState: 10s # 熔断器打开后多长时间进入半开状态
+#        permittedNumberOfCallsInHalfOpenState: 3 # 半开状态允许调用次数
+#        slidingWindowSize: 10 # 滑动窗口大小
+#        slidingWindowType: COUNT_BASED # 滑动窗口类型
+#        recordExceptions:
+#          - java.io.IOException
+#    instances:
+#      cloud-consumer-order:
+#        baseConfig: default
+
+#resilience4j:
+#  timelimiter:
+#    configs:
+#      default:
+#        timeoutDuration: 10s
+#        cancelRunningFuture: true
+#    instances:
+#      cloud-consumer-order:
+#        baseConfig: default
+#  circuitbreaker:
+#    configs:
+#      default:
+#        minimumNumberOfCalls: 5 # 最小调用次数
+#        failureRateThreshold: 50 # 失败率达到多少后
+#        waitDurationInOpenState: 10s # 熔断器打开后多长时间进入半开状态
+#        permittedNumberOfCallsInHalfOpenState: 3 # 半开状态允许调用次数
+#        slidingWindowSize: 10 # 滑动窗口大小
+#        slidingWindowType: TIME_BASED # 滑动窗口类型
+#        recordExceptions:
+#          - java.io.IOException
+#  bulkhead:
+#    configs:
+#      default:
+#        maxConcurrentCalls: 2 # 最大并发数
+#        maxWaitDuration: 1s # 最大等待时间
+#  thread-pool-bulkhead:
+#    configs:
+#      default:
+#        maxThreadPoolSize: 1 # 最大线程数
+#        queueCapacity: 1 # 队列容量
+##        keepAliveDuration: 1s # 线程存活时间
+#        coreThreadPoolSize: 1 # 核心线程数
+#    instances:
+#      cloud-payment-service:
+#        baseConfig: default
+#        maxBlockingTime: 1s # 最大阻塞时间
+#        waitQueueType: DROP_TAIL # 队列类型
+
+resilience4j:
+  ratelimiter:
+    configs:
+      default:
+        limitForPeriod: 2 # 每秒最多调用次数
+        limitRefreshPeriod: 1s # 刷新周期
+        timeoutDuration: 1s # 超时时间
+    instances:
+      cloud-payment-service:
+        baseConfig: default
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0

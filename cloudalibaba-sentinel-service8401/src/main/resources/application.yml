@@ -1,0 +1,40 @@
+server:
+  port: 8401
+
+spring:
+  application:
+    name: cloudalibaba-sentinel-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #配置Nacos地址
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+      web-context-unify: false #配置Sentinel控制台地址
+      datasource:
+        ds1:
+          nacos:
+            server-addr: localhost:8848
+            data-id: ${spring.application.name}-flow
+            group-id: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+#      datasource:
+#        #Sentinel数据源 - 流控规则配置
+#        flow:
+#          nacos:
+#            serverAddr: localhost:8848
+#            dataId: ${spring.application.name}-flow-rules
+#            groupId: DEFAULT_GROUP
+#            dataType: json
+#            rule-type: flow
+#        #Sentinel数据源 - 降级规则配置
+#        degrade:
+#          nacos:
+#            serverAddr: localhost:8848
+#            dataId: ${spring.application.name}-degrade-rules
+#            groupId: DEFAULT_GROUP
+#            dataType: json
+#            rule-type: degrade
